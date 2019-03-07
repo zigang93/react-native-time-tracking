@@ -4,21 +4,66 @@ import { StyleSheet, View, Text } from 'react-native';
 import { millisecondsToHuman } from '../utils/TimerUtils'; 
 import TimerButton from './TimerButton';
 
-export default function Timer( { title, project, elapsed } ) {
-  const elapsedString = millisecondsToHuman(elapsed);
+export default class Timer extends React.Component {
 
-  return (
-    <View style={styles.timerContainer}>
-      <Text style={styles.title}>{title}</Text>
-      <Text>{project}</Text>
-      <Text style={styles.elapsedTime}>{elapsedString}</Text>
-      <View style={styles.buttonGroup}>
-        <TimerButton color="blue" small title="Edit" />
-        <TimerButton color="blue" small title="Remove" />
-      </View>
-      <TimerButton color="#21BA45" title="Start" />
-    </View>
-  );
+  handleRemovePress = () => {
+    const { id, onRemovePress } = this.props;
+    onRemovePress(id);
+  };
+
+  handleStartPress = () => {
+    const { id, onStartPress } = this.props;
+    onStartPress(id);
+  };
+
+  handleStopPress = () => {
+    const { id, onStopPress } = this.props;
+    onStopPress(id);
+  };
+
+  renderActionButton() {
+    const { isRunning } = this.props;
+
+    if (isRunning) { 
+      return (
+        <TimerButton
+          color="#DB2828"
+          title="Stop" 
+          onPress={this.handleStopPress}
+        />
+      ); 
+    }
+
+    return ( 
+      <TimerButton 
+        color="#21BA45"
+        title="Start" 
+        onPress={this.handleStartPress}
+      />
+    ); 
+
+  }
+
+
+  render() {
+
+      const { elapsed, title, project, onEditPress } = this.props; 
+      const elapsedString = millisecondsToHuman(elapsed);
+
+      return (
+        <View style={styles.timerContainer}>
+          <Text style={styles.title}>{title}</Text>
+          <Text>{project}</Text>
+          <Text style={styles.elapsedTime}>{elapsedString}</Text>
+          <View style={styles.buttonGroup}>
+            <TimerButton color="blue" small title="Edit" onPress={onEditPress}/>
+            <TimerButton color="blue" small title="Remove" onPress={this.handleRemovePress} />
+          </View>
+          {this.renderActionButton()}
+        </View>
+      );
+  }
+
 }
 
 const styles = StyleSheet.create({ 
